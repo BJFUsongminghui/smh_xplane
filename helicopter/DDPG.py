@@ -13,7 +13,7 @@ LR_A = 0.0001  # learning rate for actor
 LR_C = 0.0002  # learning rate for critic
 GAMMA = 0.99  # reward discount
 TAU = 0.005  # soft replacement
-MEMORY_CAPACITY = 6000
+MEMORY_CAPACITY = 3000
 BATCH_SIZE = 256
 
 RENDER = False

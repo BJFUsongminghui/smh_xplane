@@ -158,12 +158,13 @@ class DDPG(object):
 
     def store_transition(self, s, a, r, s_, done=False):
         if self.hasInBuffer(s,a):
-            return 
+          print(' -----  lanjie ----')
+          return 
        
         if self.memory_size>= MEMORY_CAPACITY:
             # print('memory_size-> ',self.memory_size)
             # print('ponit-> ',self.pointer)
-           
+            self.memory_size=MEMORY_CAPACITY
             self.deleteTable(self.memory[self.pointer,  :self.s_dim],self.memory[self.pointer, self.s_dim: self.s_dim + self.a_dim])
             # print('table-> ',self.table)
         transition = np.hstack((s, a, [r], s_, [done]))
@@ -188,11 +189,14 @@ class DDPG(object):
       self.table[cur_key]=index
     def deleteTable(self,s,a):
         cur_key=getFeature(s,a)
-    #   if self.hasInBuffer(s,a):
+        if self.hasInBuffer(s,a):
+          del self.table[cur_key]
+        else:
+          print('            no    ',cur_key)
         # print('s-> ',s)
         # print('a-> ',a)
         # print('cur_key->  ',cur_key)
-        del self.table[cur_key]
+        
 
     def noise_decay(self):
         self.noise = self.noise * 0.995

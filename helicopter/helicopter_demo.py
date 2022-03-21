@@ -233,7 +233,7 @@ class HelicopterSpace(Env):
         reward = abs(state_[2]**2+state_[3]**2)-abs(state[2]**2+state[3]**2)
         reward=(reward-10)/20.
         if self.has_collided(self.spawned_fuel, self.helicopter):
-            reward +=20
+            reward+= 20
             done=True
         
         # Increment the episodic return
@@ -332,7 +332,7 @@ def display_frames_as_gif(frames):
 
 import random
 
-import DDPG_F as rl
+import DDPG as rl
 import torch
 from tensorboardX import SummaryWriter
 import time
@@ -342,7 +342,7 @@ MAX_EPISODES = 200
 MAX_EP_STEPS = 300
 ON_TRAIN = True
 MEMORY_CAPACITY_TRAIN = 500
-MEMORY_CAPACITY = 10000
+MEMORY_CAPACITY = 2000000
 A_PLANE=10
 
 def assert_action(action):
@@ -356,7 +356,7 @@ def multi_run():
     # ddpg=torch.load("./long_pos/models/2199.pl")
     # ddpg=torch.load("1399_d.pl")
     s = xenv.reset()
-    res_store_dir = "long_pos/logs/F-1000-20v" + time.strftime("-%Y-%m-%d-%H-%M-%S", time.localtime())
+    res_store_dir = "long_pos/logs/1000-20v" + time.strftime("-%Y-%m-%d-%H-%M-%S", time.localtime())
     writer = SummaryWriter( res_store_dir)  # 保存结果
     train_step = 0
 
@@ -382,10 +382,9 @@ def multi_run():
             s = s_
             if done :
 
-                print('Ep: %i | %s | ep_r: %.1f | steps: %i |table :%i |memory :%i' % (i, '----' if not done else 'done', ep_r, j,len(ddpg.table),ddpg.memory_size))
+                print('Ep: %i | %s | ep_r: %.1f | steps: %i | memory:%.1f' % (i, '----' if not done else 'done', ep_r, j,ddpg.memory_size))
                 s = xenv.reset()
                 writer.add_scalar('long pos reward in eipsode', ep_r, global_step=i)
-                writer.add_scalar('table size', len(ddpg.table), global_step=i)
                 writer.add_scalar('memory size', ddpg.memory_size, global_step=i)
                 writer.add_scalar('steps in eipsode', j + 1, global_step=i)
                 writer.add_scalar('every_reward in eipsode', ep_r / (j + 1), global_step=i)
@@ -397,6 +396,46 @@ def multi_run():
         if (i + 1) % 200 == 0 and ddpg.pointer >= MEMORY_CAPACITY_TRAIN:
             torch.save(ddpg,"long_pos/models/"+str(i) + ".pl")
 
+
+import math
+def section(d):
+    if d<100:
+        return 1
+    if d<200:
+        return 2
+    if d<300:
+        return 3
+    if d<400:
+        return 4
+    if d<500:
+        return 5
+    if d<600:
+        return 6
+    return 7
+def tes():
+    env = HelicopterSpace()
+    ddpg = torch.load("long_pos/models/199.pl")
+    result=[0,0,0,0,0,0,0,0]
+    for i in range(20):
+        ep_r = 0
+        # 开始一次训练
+        j=0
+        fuel_x = random.randrange(700, 800)
+        fuel_y = random.randrange(500, 800)
+        obs = env.reset_test(fuel_x=fuel_x,fuel_y=fuel_y)
+        d=math.sqrt(obs[2]**2+obs[3]**2)
+        while True:
+            a = ddpg.choose_action(torch.FloatTensor(obs)).detach().cpu().numpy()
+            a=[assert_action(a[0]),assert_action(a[1])]
+            s_, r, done,_ = env.step(a)
+            env.render()
+            j+=1
+            if done == True:
+                break
+        if j<env.max_fuel:
+            result[section(d)]+=1
+    env.close()
+    print(result)
 if __name__ == '__main__':
     multi_run()
     #tes()
