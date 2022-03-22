@@ -13,7 +13,7 @@ LR_A = 0.0001  # learning rate for actor
 LR_C = 0.0002  # learning rate for critic
 GAMMA = 0.99  # reward discount
 TAU = 0.005  # soft replacement
-MEMORY_CAPACITY = 3000
+MEMORY_CAPACITY = 30000
 BATCH_SIZE = 256
 
 RENDER = False
@@ -31,7 +31,8 @@ def getFeature(s,a):
     low_dim_data = pca.fit_transform(s_data)
     a_data=np.array([a,[1,1]])
     low_dim_a = pca.fit_transform(a_data)
-    cur_key=str(round(low_dim_data[0][0],3))+'_'+str(round(low_dim_a[0][0],3))
+    cur_key=str(round(low_dim_data[0][0],3))+'_'+str(round(low_dim_a[0][0],2))
+    # print(s,' ',a,' ',cur_key)
     return cur_key
 class ANet(nn.Module):  # ae(s)=a
     def __init__(self, s_dim, a_dim):  # edited by wsr 2021-5-31，进一步减小网络规模
@@ -158,8 +159,8 @@ class DDPG(object):
 
     def store_transition(self, s, a, r, s_, done=False):
         if self.hasInBuffer(s,a):
-          print(' -----  lanjie ----')
-          return 
+          # print(' -----  lanjie ----')
+          return 1
        
         if self.memory_size>= MEMORY_CAPACITY:
             # print('memory_size-> ',self.memory_size)
@@ -173,7 +174,7 @@ class DDPG(object):
         self.pointer += 1
         self.memory_size+=1
         self.pointer = self.pointer % MEMORY_CAPACITY  # replace the old memory with new memory
-       
+        return 0
 
     def hasInBuffer(self,s,a):
     #   print('s   ',s,'     a    ',a)
