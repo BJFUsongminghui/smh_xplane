@@ -155,7 +155,7 @@ class HelicopterSpace(Env):
         # 
         state=self.get_state()
         reward = abs(state_[2]**2+state_[3]**2)-abs(state[2]**2+state[3]**2)
-
+        reward=(reward-1)/2.
         if self.has_collided(self.sub_point[0], self.helicopter):
             reward +=(V_PLANE*2)
             if len(self.sub_point)==1:

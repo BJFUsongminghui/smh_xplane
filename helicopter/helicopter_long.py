@@ -235,7 +235,7 @@ class HelicopterSpace(Env):
         state=self.get_state()
         #reward = abs(state_[2])-abs(state[2])+abs(state_[3])-abs(state[3])
         reward = abs(state_[2]**2+state_[3]**2)-abs(state[2]**2+state[3]**2)
-        # reward=(reward-10)/20.
+        reward=(reward-1)/2.
         if self.has_collided(self.spawned_fuel, self.helicopter):
             reward+= 20
             done=True
