@@ -10,9 +10,9 @@ import time
 font = cv2.FONT_HERSHEY_COMPLEX_SMALL
 from matplotlib import animation
 
-SPACE_X=1000  # 
-SPACE_Y=1000  # 
-MAX_FUEL= 600  #
+SPACE_X=3000  # 
+SPACE_Y=3000  # 
+MAX_FUEL= 1800  #
 # SPACE_X=1000  # 
 # SPACE_Y=1000  # 
 # MAX_FUEL= 600  #
@@ -70,8 +70,10 @@ class HelicopterSpace(Env):
         # Determine a place to initialise the helicopter
         # x = random.randrange(int(self.observation_shape[0] * 0.05), int(self.observation_shape[0] * 0.10))
         # y = random.randrange(int(self.observation_shape[1] * 0.15), int(self.observation_shape[1] * 0.20))
-        x = SPACE_X/2
-        y = SPACE_Y/2
+        # x = SPACE_X/2
+        # y = SPACE_Y/2
+        x = 2
+        y = 2
         # 初始化直升机的位置  Initialise the helicopter
         self.helicopter = Helicopter('helicopter', self.x_max, self.x_min, self.y_max, self.y_min)
         self.helicopter.set_position(x, y)
@@ -82,19 +84,19 @@ class HelicopterSpace(Env):
         self.spawned_fuel = Fuel("fuel", self.x_max, self.x_min, self.y_max, self.y_min)
         #现将加油站的位置设置为固定位置
 
-        choose=random.randint(0,3)
+        choose=random.randint(0,1)
        
-        fuel_x = get_min_range()
-        fuel_y = get_all_range()
-        if choose==1:
-            fuel_x = get_all_range()
-            fuel_y = get_min_range()
+        # fuel_x = get_min_range()
+        # fuel_y = get_all_range()
+        # if choose==1:
+        #     fuel_x = get_all_range()
+        #     fuel_y = get_min_range()
         
-        if choose==2:
-            fuel_x = get_max_range()
-            fuel_y = get_all_range()
+        # if choose==2:
+        fuel_x = get_max_range()
+        fuel_y = get_all_range()
 
-        if choose==3:
+        if choose==1:
             fuel_x = get_all_range()
             fuel_y = get_max_range()
       
